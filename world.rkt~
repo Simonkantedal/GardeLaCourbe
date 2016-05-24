@@ -11,16 +11,7 @@
 (provide start)
 (provide *graphics-timer*)
 (provide *game-timer*)
-(define time 0) ;; Initiates time to 0.
-
-;; FILE: world.rkt
-;;
-;; DESCRIPTION: Contains all canvases for the game aswell as the game mechanics.
-;;              
-;;
-;; LAST CHANGE: 24/5-16 (by simon).
-;;
-;; Written by: Simon Kantedal.
+(define time 0) ;; Initiates time to 0. 
 
 
 
@@ -66,14 +57,7 @@
         [function 'set-radius]
         [color "purple"])))
 
-    ;; FUNCTION: 
-    ;;
-    ;; DESCRIPTION: Function called upon from draw. Puts out dots on the canvas and connects those dots with lines.
-    ;;              
-    ;;
-    ;; INPUT: Snake-list.
-    ;;
-    ;; OUTPUT: None.
+; Function called upon from draw. Puts out dots on the canvas and connects those dots with lines.
 (define draw-snake
   (lambda (ls)
     (if (or (void? ls) (null?  (cdr ls)))
@@ -92,14 +76,6 @@
               (draw-snake (cdr ls))))))))
 
 ;; Function called upon in on-paint on the canvas. Sets the pen and calls for draw-snake above.
-    ;; FUNCTION: 
-    ;;
-    ;; DESCRIPTION:
-    ;;              
-    ;;
-    ;; INPUT:
-    ;;
-    ;; OUTPUT: None.
 (define draw
   (lambda (lst)
     (if (not (null? lst))
@@ -112,14 +88,6 @@
         (void))))
 
 ;; Draws up the playing field.
-    ;; FUNCTION: 
-    ;;
-    ;; DESCRIPTION:
-    ;;              
-    ;;
-    ;; INPUT:
-    ;;
-    ;; OUTPUT: None.
 (define draw-field
   (lambda ()
     (begin
@@ -131,14 +99,6 @@
 
 ;; The function that draws up a powerup. Num decides what powerup
 ;; that will be.
-   ;; FUNCTION: 
-    ;;
-    ;; DESCRIPTION:
-    ;;              
-    ;;
-    ;; INPUT:
-    ;;
-    ;; OUTPUT: None.
 (define draw-power-up
   (lambda (num)
     (if (and
@@ -185,14 +145,7 @@
           (hash-set! key-events "l3" #f)
           (hash-set! key-events "r3" #f))))
     
-    ;; FUNCTION:    send-key-events.
-    ;;
-    ;; DESCRIPTION: Sends the key-events, making them accesible from the playerclass.
-    ;;              
-    ;;
-    ;; INPUT:
-    ;;
-    ;; OUTPUT: None.
+    ;; Sends the key-events, making them accesible from the playerclass.
     (define/public send-key-events
       (lambda (lst)
         (if (null? lst) (void)
@@ -200,15 +153,9 @@
               (send (car lst) steer key-events)
               (send-key-events (cdr lst))))))
     
-    ;; FUNCTION:    on-char
-    ;;
-    ;; DESCRIPTION: The keyboard listener. I case of key-codes it sets the corresponding
-    ;;              value in the hash table to #t. In case of release-code of the button
-    ;;              it sets the value to #f.
-    ;;
-    ;; INPUT:       key-events from keyboard.
-    ;;
-    ;; OUTPUT:      None.
+    ;; The keyboard listener. I case of key-codes it sets the corresponding
+    ;; value in the hash table to #t. In case of release-code of the button
+    ;; it sets the value to #f.
     (define/override (on-char ke)
       (begin
         (case (send ke get-key-code)
@@ -243,14 +190,8 @@
     
     (super-new)))
 
-    ;; FUNCTION: all-dead
-    ;;
-    ;; DESCRIPTION: Function that runs when all players are stopped to close down the game window and
-    ;;              show the screen-between-rounds.
-    ;;
-    ;; INPUT: None.
-    ;;
-    ;; OUTPUT: None.
+;; Function that runs when all players are stopped to close down the game window and
+;; show the screen-between-rounds.
 (define all-dead
   (lambda ()
     (if (equal? (send (car snake-list) get-rounds) 3)
@@ -274,15 +215,8 @@
           (send screen-after-rounds focus)
           (draw-stats game-canvas dc-between)))))
 
-
-    ;; FUNCTION: sum-up-score
-    ;;
-    ;; DESCRIPTION: Function thats adds up score to the accumulated-score field in player class aswell as changing
-    ;;              the label on the screen between rounds.
-    ;;
-    ;; INPUT: snake-list
-    ;;
-    ;; OUTPUT: None.
+;; Function thats adds up score to the accumulated-score field in player class aswell as changing
+;; the label on the screen between rounds.
 (define sum-up-score
   (lambda (lst)
     (begin
