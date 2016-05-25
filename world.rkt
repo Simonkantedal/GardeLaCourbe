@@ -13,14 +13,14 @@
 (provide *game-timer*)
 (define time 0) ;; Initiates time to 0.
 
-;; FILE: world.rkt
+;; FILE:        world.rkt
 ;;
 ;; DESCRIPTION: Contains all canvases for the game aswell as the game mechanics.
 ;;              
 ;;
-;; LAST CHANGE: 24/5-16 (by simon).
+;; LAST CHANGE: 25/5-16 (by Jakob).
 ;;
-;; Written by: Simon Kantedal.
+;; Written by:  Simon Kantedal and Jakob Jerrelind.
 
 
 
@@ -66,14 +66,14 @@
         [function 'set-radius]
         [color "purple"])))
 
-    ;; FUNCTION: 
+    ;; FUNCTION:    draw-snake
     ;;
     ;; DESCRIPTION: Function called upon from draw. Puts out dots on the canvas and connects those dots with lines.
     ;;              
     ;;
-    ;; INPUT: Snake-list.
+    ;; INPUT:       Snake-list.
     ;;
-    ;; OUTPUT: None.
+    ;; OUTPUT:      None.
 (define draw-snake
   (lambda (ls)
     (if (or (void? ls) (null?  (cdr ls)))
@@ -90,16 +90,15 @@
             (send dc draw-line x y x_next y_next)
             (when (not (null? (cdr ls)))
               (draw-snake (cdr ls))))))))
-
-;; Function called upon in on-paint on the canvas. Sets the pen and calls for draw-snake above.
-    ;; FUNCTION: 
+ 
+    ;; FUNCTION:    draw
     ;;
-    ;; DESCRIPTION:
+    ;; DESCRIPTION: Function called upon in on-paint on the canvas. Sets the pen and calls for draw-snake above.
     ;;              
     ;;
-    ;; INPUT:
+    ;; INPUT:       lst
     ;;
-    ;; OUTPUT: None.
+    ;; OUTPUT:      None.
 (define draw
   (lambda (lst)
     (if (not (null? lst))
@@ -112,14 +111,14 @@
         (void))))
 
 ;; Draws up the playing field.
-    ;; FUNCTION: 
+    ;; FUNCTION:    draw-field.
     ;;
-    ;; DESCRIPTION:
+    ;; DESCRIPTION: Draws the game field and the score.
     ;;              
     ;;
-    ;; INPUT:
+    ;; INPUT:       None.
     ;;
-    ;; OUTPUT: None.
+    ;; OUTPUT:      None.
 (define draw-field
   (lambda ()
     (begin
@@ -131,14 +130,14 @@
 
 ;; The function that draws up a powerup. Num decides what powerup
 ;; that will be.
-   ;; FUNCTION: 
+   ;; FUNCTION:     draw-power-up.
     ;;
-    ;; DESCRIPTION:
-    ;;              
+    ;; DESCRIPTION: The function that draws up a powerup, 
+    ;;              num decides what poweru that will be.   
     ;;
-    ;; INPUT:
+    ;; INPUT:       num.
     ;;
-    ;; OUTPUT: None.
+    ;; OUTPUT:      None.
 (define draw-power-up
   (lambda (num)
     (if (and
@@ -165,7 +164,7 @@
     (inherit get-width get-height refresh)
     (field
      [key-events (make-hash)])
-    
+    ;; Procedure to call draw-field, draw-power-up and draw the snakes
     (define/override (on-paint)
       (begin
         (draw-field)
@@ -190,9 +189,9 @@
     ;; DESCRIPTION: Sends the key-events, making them accesible from the playerclass.
     ;;              
     ;;
-    ;; INPUT:
+    ;; INPUT:       lst.
     ;;
-    ;; OUTPUT: None.
+    ;; OUTPUT:      None.
     (define/public send-key-events
       (lambda (lst)
         (if (null? lst) (void)
@@ -325,8 +324,17 @@
     (send game-canvas focus)
     (send game-canvas init)
     (send (car snake-list) add-round)
-    (start-round)
-    ))
+    (start-round)))
+
+
+    ;; FUNCTION: draw-score.
+    ;;
+    ;; DESCRIPTION:Procedure to draw the score for each player on the game-canvas.
+    ;;              
+    ;;
+    ;; INPUT: dca.
+    ;;
+    ;; OUTPUT: None.
 
 (define (draw-score canvas dca)
   (begin
@@ -337,6 +345,16 @@
   (send dca draw-text (string-append "Player2: " (number->string (send (cadr snake-list) get-score))) 20 40))
   (when (equal? (send (caddr snake-list) show?) #t)
   (send dca draw-text (string-append "Player3: " (number->string (send (caddr snake-list) get-score))) 20 60))))
+
+
+    ;; FUNCTION: draw-stats.
+    ;;
+    ;; DESCRIPTION: Procedure to draw the score summary between rounds.
+    ;;              
+    ;;
+    ;; INPUT: dc.
+    ;;
+    ;; OUTPUT: None.
 
 (define (draw-stats canvas dc)
   (begin
@@ -350,6 +368,16 @@
   (when (equal? (send (caddr snake-list) show?) #t)
     (send dc draw-text (string-append "Player3: " (number->string (send (caddr snake-list) get-acc-score))) 450 400))))
 
+
+    ;; FUNCTION: final-score.
+    ;;
+    ;; DESCRIPTION: Procedure to draw the final-score on the end-frame.
+    ;;              
+    ;;
+    ;; INPUT: dc.
+    ;;
+    ;; OUTPUT: None.
+
 (define (final-score canvas dc)
   (begin
     (send dc set-brush "black" 'solid)
@@ -362,28 +390,36 @@
     (when (equal? (send (caddr snake-list) show?) #t)
       (send dc draw-text (string-append "Final Score Player3: " (number->string (send (caddr snake-list) get-acc-score))) 450 450))))      
 
+;; The game-frame.
 (define game-frame (new frame% (label "Garde la courbe") (width 1024) (height 768)))
+;; The game-canvas.
 (define game-canvas (new game-canvas%
                          [parent game-frame]
                          [paint-callback draw-score]))
-
+;; The screen-bewteen-rounds.
 (define screen-between-rounds (new frame% (label "Good job") (width 1024) (height 768)))
+;; The end-screen.
 (define end-screen (new frame% (label "Game over") (width 1024) (height 768)))
+;; The end-canvas.
 (define end-canvas (new canvas% [parent end-screen] [paint-callback final-score]))
+;; The dc for the end-canvas.
 (define final-dc (send end-canvas get-dc))
-(define (quitfinal button event)
+;; To close the end-screen
+(define (quit-endscreen button event)
   (send end-screen show #f))
 (new button%
      [label "Quit"]
      [parent end-screen]
-     [callback quitfinal])
+     [callback quit-endscreen])
 
 ;; Canvas with accumulated score after a round.
 (define screen-after-rounds
   (new canvas%
        [parent screen-between-rounds]
        [paint-callback draw-stats]))
+;; The dc for the screen between rounds
 (define dc-between (send screen-after-rounds get-dc))
+;; Button for next round
 (new button%
      [label "Next round!"]
      [parent screen-between-rounds]

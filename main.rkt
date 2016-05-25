@@ -5,46 +5,57 @@
 (require "world.rkt")
 (require "PlayerClass.rkt")
 
-;frame for the menuwindow
+;; FILE: main.rkt
+;;
+;; DESCRIPTION: Contains everything on the menu window and is the starting file.
+;;              
+;; LAST CHANGE: 2016-05-25 (by Jakob).
+;;
+;; Written by: Jakob Jerrelind.
+
+
+
+
+;; Frame for the menuwindow
 (define startwindow
   (new frame%
        [label "Startscreen Garde La Courbe"]
        [width 650]
        [height 800]))
 
-;Bitmap header to the menuwindow
+;; Bitmap header to the menuwindow
 (define *our-bitmap* (make-object bitmap% "Bild.png"))
 
-;Draws the bitmap
+;; Draws the bitmap
 (define (our-draw canvas dc)
   (send dc draw-bitmap *our-bitmap* 0 0))
 
-;Canvas on the menuwindow
+;; Canvas on the menuwindow
 (define start-screen
   (new canvas%
        [parent startwindow]
        [paint-callback our-draw]))
 
-;shows the menuwindow
+;; Shows the menuwindow
 (send startwindow show #t)
 
-;Panel in menuwindow 
+;; Panel in menuwindow 
 (define panel (new group-box-panel%
                    [label "Meny"]
                    [parent startwindow]
                    [alignment '(right center)]))
-;Subpanel in menuwindow
+;; Subpanel in menuwindow
 (define subpanel (new group-box-panel%
                       [label " "]
                       [parent panel]
                       [alignment '(left center)]))
-;help frame
+;; Help frame
 (define helpframe (new frame%
                        [label "Help"]
-                       [width 500]
+                       [width 550]
                        [height 200]))
 
-;The button "help"
+;; The "Help" button 
 (define (help button event)
   (send helpframe show #t))
 (new button%
@@ -52,83 +63,111 @@
      [parent panel]
      [callback help])
 
-;button to quit in menuwindow
-(define (quitstart button event)
+;; Button to quit the menuwindow
+(define (quit-startframe button event)
   (send startwindow show #f))
 (new button%
      [label "Quit"]
      [parent panel]
-     [callback quitstart])
+     [callback quit-startframe])
 
-;quit button for the game-frame
-(define (quitgame button event)
+;; Quit button for the game-frame
+(define (quit-gameframe button event)
   (send game-frame show #f)
   (send *graphics-timer* stop)
     (send *game-timer* stop))
 (new button%
      [label "Quit"]
      [parent game-frame]
-     [callback quitgame])
+     [callback quit-gameframe])
 
 
 
-;Callback for "One Snake"
+ ;; FUNCTION: one-player
+    ;;
+    ;; DESCRIPTION: Function called from the "One Snake"-buttons callback, and sets how many snakes to play with.
+    ;;              
+    ;;
+    ;; INPUT: Button and event.
+    ;;
+    ;; OUTPUT: None.
 (define (one-player button event)
   (begin
-  (send (car snake-list) include) ;shows the first snake
-  (send one-snake set-label "You have chosen one player, start game!  ") ;label when pressed
-  (send button set-label "Marked") ;new button label
-  (send playerwindow show #f) ;playerwindow to false
-  (send (cadr snake-list) remove) ;set show to false for player2 
-  (send (caddr snake-list) remove) ;set show to false for player3
-  (send twosnake set-label "Two Snakes") ;change button label
-  (send threesnake set-label "Three Snakes") ;change button label
-  (send two-snakes set-label "Press to play with two Snakes                     ") ;revert to origin label
-  (send three-snakes set-label "Press to play with three Snakes                     ") ;revert to origin label
-    (send (cadr snake-list) kill) ;set alive to false
-    (send (caddr snake-list) kill))) ;set alive to false
+  (send (car snake-list) include) ;; Shows the first snake
+  (send one-snake set-label "You have chosen one player, start game!  ") ;; Label when pressed
+  (send button set-label "Marked") ;; New button label
+  (send playerwindow show #f) ;; Playerwindow to #f
+  (send (cadr snake-list) remove) ;; Set show to #f for player2 
+  (send (caddr snake-list) remove) ;; Set show to #f for player3
+  (send twosnake set-label "Two Snakes") ;; Change button label
+  (send threesnake set-label "Three Snakes") ;; Change button label
+  (send two-snakes set-label "Press to play with two Snakes                     ") ;; Revert to origin label
+  (send three-snakes set-label "Press to play with three Snakes                     ") ;; Revert to origin label
+    (send (cadr snake-list) kill) ;; Set alive to #f
+    (send (caddr snake-list) kill))) ;; Set alive to #f
 
-;Callback for "Two Snakes"
+;; FUNCTION: two-player
+    ;;
+    ;; DESCRIPTION: Function called from the "Two Snakes"-buttons callback, and sets how many snakes to play with.
+    ;;              
+    ;;
+    ;; INPUT: Button and event.
+    ;;
+    ;; OUTPUT: None.
 (define (two-players button event)
   (begin
-  (send (car snake-list) include) ;show first snake
-  (send (cadr snake-list) include) ;show second snake
-  (send two-snakes set-label "You have chosen two players, start game!  ") ;label when pressed
-  (send button set-label "Marked") ;button label
-  (send playerwindow show #f) ;playerwindow to false
-  (send (caddr snake-list) remove) ;sets show to false for the third snake
-  (send onesnake set-label "One Snake") ;change button label
-  (send threesnake set-label "Three Snakes") ;change button label
-  (send one-snake set-label "Press to play with one Snake                     ") ;revert to origin label
-  (send three-snakes set-label "Press to play with three Snakes                     ") ;revert to origin label
-    (send (caddr snake-list) kill) ;set alive to false for third snake
-    (send (cadr snake-list) revive))) ;set alive to true for second snake
+  (send (car snake-list) include) ;; Show first snake
+  (send (cadr snake-list) include) ;; Show second snake
+  (send two-snakes set-label "You have chosen two players, start game!  ") ;; Label when pressed
+  (send button set-label "Marked") ;; Button label
+  (send playerwindow show #f) ;; Playerwindow to #f
+  (send (caddr snake-list) remove) ;; Sets show to #f for the third snake
+  (send onesnake set-label "One Snake") ;; Change button label
+  (send threesnake set-label "Three Snakes") ;; Change button label
+  (send one-snake set-label "Press to play with one Snake                     ") ;; Revert to origin label
+  (send three-snakes set-label "Press to play with three Snakes                     ") ;; Revert to origin label
+    (send (caddr snake-list) kill) ;; Set alive to #f for third snake
+    (send (cadr snake-list) revive))) ;; Set alive to #t for second snake
 
 
-;Callback for "Three Snakes"
+;; FUNCTION: three-player
+    ;;
+    ;; DESCRIPTION: Function called from the "Three-Snakes"-buttons callback, and sets how many snakes to play with.
+    ;;              
+    ;;
+    ;; INPUT: Button and event.
+    ;;
+    ;; OUTPUT: None.
 (define (three-players button event)
   (begin
-  (send (car snake-list) include) ;set show to true
-  (send (cadr snake-list) include) ;set show to true 
-  (send (caddr snake-list) include);set show to true
-  (send three-snakes set-label "You have chosen three players, start game!  ") ;label when pressed
-  (send button set-label "Marked") ;button label
-  (send playerwindow show #f) ;playerwindow to false
-  (send onesnake set-label "One Snake") ;change button label
-  (send twosnake set-label "Two Snakes") ;change button label
-  (send one-snake set-label "Press to play with one Snake                     ") ;revert label to origin
-  (send two-snakes set-label "Press to play with two Snakes                     ") ;revert label to origin
-  (send (caddr snake-list) revive) ;set alive to true
-    (send (cadr snake-list) revive))) ;set alive to true
+  (send (car snake-list) include) ;; Set show to #t
+  (send (cadr snake-list) include) ;; Set show to #t 
+  (send (caddr snake-list) include);; Set show to #t
+  (send three-snakes set-label "You have chosen three players, start game!  ") ;; Label when pressed
+  (send button set-label "Marked") ;; Button label
+  (send playerwindow show #f) ;; Playerwindow to #f
+  (send onesnake set-label "One Snake") ;; Change button label
+  (send twosnake set-label "Two Snakes") ;; Change button label
+  (send one-snake set-label "Press to play with one Snake                     ") ;; Revert label to origin
+  (send two-snakes set-label "Press to play with two Snakes                     ") ;; Revert label to origin
+  (send (caddr snake-list) revive) ;; Set alive to #t
+    (send (cadr snake-list) revive))) ;; Set alive to #t
 
-;Error window when not choosing number of players and difficulty
+;; Error window when not choosing number of players and difficulty
 (define playerwindow (new frame%
                           [label "Choose number of players"]
                           [width 100]
                           [height 100]))
 
-;; Callback for "Start"-knappen
-(define (buttproc button event)
+;; FUNCTION: start-proc
+    ;;
+    ;; DESCRIPTION: Function called from the "Start"-buttons callback, and starts the game function in world.rkt.
+    ;;              
+    ;;
+    ;; INPUT: Button and event.
+    ;;
+    ;; OUTPUT: None.
+(define (start-proc button event)
   (if (and (equal? (send (car snake-list) show?) #t)
            (or (equal? (send (car snake-list) get-velocity) 4)
                (equal? (send (car snake-list) get-velocity) 6)
@@ -153,73 +192,104 @@
   (new message% [label "        Press to start game        "]
        [parent startwindow]))
 
-;Start button
-(define our-utton (new button%
-                       [label "start"]
+;; Start button
+(new button%
+                       [label "Start"]
                        [parent startwindow]
-                       [callback buttproc]))
+                       [callback start-proc])
 
-;Infotext
-(define one-playersteering
-  (new message% [label "You control the first snake with right-key and left-key, the second snake with Q and W, and the third snake with V and B          "]
+;; Help text
+(define Helptext1
+  (new message% [label "You control the yellow snake with right-key and left-key, the bluw snake with Q and W, and the white snake with V and B          "]
+       [parent helpframe]))
+;; Help text
+(define Helptext2
+  (new message% [label "Red power-up sets the velocity to faster, green power-up sets the velocity to slower and the purple changes the steering angle for the other snakes        "]
        [parent helpframe]))
 
-;infotext om vad som händer när du trycker på knappen
+;; Label over "One Snake"-button
 (define one-snake (new message% [label "Press to play with one Snake                           "] [parent subpanel]))
 
-;Knapp för en orm
+;; "One Snake"-button
 (define onesnake (new button%
                       [label "One Snake"]
                       [parent subpanel]
                       [callback one-player]))
 
-;infotext om vad som händer när du trycker på knappen
+;; Label over "Two Snakes"-button
 (define two-snakes (new message% [label "Press to play with two Snakes                     "] [parent subpanel]))
 
-;Knapp för två ormar
+;; "Two snakes"-button
 (define twosnake (new button%
                       [label "Two Snakes"]
                       [parent subpanel]
                       [callback two-players]))
-;infotext om vad som händer när du trycker på knappen
+;; Label over "One Snake"-button
 (define three-snakes (new message% [label "Press to play with three Snakes                      "] [parent subpanel]))
-;Knapp för tre ormar
+
+;; "Three Snakes"-button
 (define threesnake (new button%
                         [label "Three Snakes"]
                         [parent subpanel]
                         [callback three-players]))
 
-;Procedure to set snakes starting velocity to 2."
-(define (easy a b)
+;;Procedure to set snakes starting velocity to 2."
+;; FUNCTION: easy
+    ;;
+    ;; DESCRIPTION: Procedure to set snakes starting velocity to 4.
+    ;;              
+    ;;
+    ;; INPUT: Button and event.
+    ;;
+    ;; OUTPUT: None.
+(define (easy button event)
   (begin
-  (send a set-label "Marked")
+  (send button set-label "Marked")
   (send (car snake-list) low-speed)
   (send (cadr snake-list) low-speed)
   (send (caddr snake-list) low-speed)
   (send playerwindow show #f)
   (send Medium set-label "Medium")
   (send Hard set-label "Hard")))
-;Procedure to set snakes starting velocity to 4."
-(define (medium a b)
+
+;; FUNCTION: medium
+    ;;
+    ;; DESCRIPTION: Procedure to set snakes starting velocity to 6.
+    ;;              
+    ;;
+    ;; INPUT: Button and event.
+    ;;
+    ;; OUTPUT: None.
+
+(define (medium button event)
   (begin
-  (send a set-label "Marked")
+  (send button set-label "Marked")
   (send (car snake-list) medium-speed)
   (send (cadr snake-list) medium-speed)
   (send (caddr snake-list) medium-speed)
   (send playerwindow show #f)
   (send Easy set-label "Easy")
   (send Hard set-label "Hard")))
-;Procedure to set snakes starting velocity to 6."
-(define (hard a b)
+
+;; FUNCTION: hard
+    ;;
+    ;; DESCRIPTION: Procedure to set snakes starting velocity to 6.
+    ;;              
+    ;;
+    ;; INPUT: Button and event.
+    ;;
+    ;; OUTPUT: None.
+(define (hard button event)
   (begin
-  (send a set-label "Marked")
+  (send button set-label "Marked")
   (send (car snake-list) high-speed)
   (send (cadr snake-list) high-speed)
   (send (caddr snake-list) high-speed)
   (send playerwindow show #f)
   (send Easy set-label "Easy")
   (send Medium set-label "Medium")))
-;Knappar med olika hastighet som önskas
+
+;; Buttons with different diffiulty for the game
 (define speed (new message% [label "Difficulty"] [parent subpanel]))
 
 (define Easy (new button%
