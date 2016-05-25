@@ -273,7 +273,7 @@
 
 ;; FUNCTION: hard
     ;;
-    ;; DESCRIPTION: Procedure to set snakes starting velocity to 8.
+    ;; DESCRIPTION: Procedure to set snakes starting velocity to 6.
     ;;              
     ;;
     ;; INPUT: Button and event.

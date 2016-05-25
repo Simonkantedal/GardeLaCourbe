@@ -2,24 +2,6 @@
 
 (provide power-up%)
 
-;; FILE:        PowerupClass.rkt
-;;
-;; DESCRIPTION: Contains the powerup-class.
-;;              
-;;
-;; LAST CHANGE: 2016-05-25 (by Jakob).
-;;
-;; Written by:  Simon Kantedal.
-
-
-;; FUNCTION:    power-up%
-    ;;
-    ;; DESCRIPTION: The power-up class.
-    ;;              
-    ;;
-    ;; INPUT:       none.
-    ;;
-    ;; OUTPUT:      None.
 (define power-up%
   (class object%
     [init-field name

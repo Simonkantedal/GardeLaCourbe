@@ -18,7 +18,7 @@
 ;; DESCRIPTION: Contains all canvases for the game aswell as the game mechanics.
 ;;              
 ;;
-;; LAST CHANGE: 2016-05-25 (by Jakob).
+;; LAST CHANGE: 25/5-16 (by Jakob).
 ;;
 ;; Written by:  Simon Kantedal and Jakob Jerrelind.
 
@@ -276,7 +276,8 @@
 
     ;; FUNCTION: sum-up-score
     ;;
-    ;; DESCRIPTION: Function thats adds up score to the accumulated-score field in player class.
+    ;; DESCRIPTION: Function thats adds up score to the accumulated-score field in player class aswell as changing
+    ;;              the label on the screen between rounds.
     ;;
     ;; INPUT: snake-list
     ;;
@@ -291,15 +292,7 @@
       (when (equal? (send (caddr snake-list) show?) #t)
         (send (caddr lst) sum-up-score)))))
 
- ;; FUNCTION:       start-round
-    ;;
-    ;; DESCRIPTION: Function in the next-round buttons callback, change the snakes stats and starts the round.
-    ;;              
-    ;;
-    ;; INPUT:       None.
-    ;;
-    ;; OUTPUT:      None.
-
+;; Callback for start-round button. Starts round.
 (define (start-round)
   (begin
     (when (equal? (send (car snake-list) show?) #t)
@@ -321,16 +314,8 @@
     (send *graphics-timer* start 32 #f)
     (send *game-timer* start 32 #f)))
 
- ;; FUNCTION:       next-round
-    ;;
-    ;; DESCRIPTION: Callback for the next-button round.
-    ;;              
-    ;;
-    ;; INPUT:       button and event.
-    ;;
-    ;; OUTPUT:      None.
-
-(define (next-round button event)
+;; Callback for the next-button round.
+(define (next-round a b)
   (begin      
     (send screen-between-rounds show #f)
     (send screen-after-rounds show #f)
@@ -456,16 +441,8 @@
      #f)))
 
 
-
- ;; FUNCTION: refresher.
-    ;;
-    ;; DESCRIPTION: The main function responsible for updating the games physics.
-    ;; Executes from the timer with the interval given there.
-    ;;              
-    ;;
-    ;; INPUT: None.
-    ;;
-    ;; OUTPUT: None.
+;; The main function responsible for updating the games physics.
+;; Executes from the timer with the interval given there.
 (define (refresher)
   (begin
     (set! time (+ time 1))
@@ -493,15 +470,7 @@
             (all-dead? (cdr lst))
             #f))))
 
-
-;; FUNCTION: update-score.
-    ;;
-    ;; DESCRIPTION: Function that adds score to snakes alive.
-    ;;              
-    ;;
-    ;; INPUT: lst.
-    ;;
-    ;; OUTPUT: None.
+;; Function that adds score to snakes alive.
 (define update-score
   (lambda (lst)
     (begin
@@ -524,14 +493,7 @@
           (send (car lst) normalize)
           (normalize-players (cdr lst))))))
 
-;; FUNCTION: update-players.
-    ;;
-    ;; DESCRIPTION: Function updating players positions by calling the update-function in the player-class.
-    ;;              
-    ;;
-    ;; INPUT: lst and time.
-    ;;
-    ;; OUTPUT: None.
+;; Function updating players positions by calling the update-function in the player-class.
 (define update-players
   (lambda (lst time)
     (when (not (null? lst))
@@ -541,15 +503,7 @@
             (update-players (cdr lst) time))
           (update-players (cdr lst) time)))))
 
-
-;; FUNCTION: within-frame?
-    ;;
-    ;; DESCRIPTION: Checks if the snakes are within the game-frame,
-    ;;              otherwise stops them.              
-    ;;
-    ;; INPUT: lst and time.
-    ;;
-    ;; OUTPUT: None.
+;; Checks if the snakes are within the game-frame, otherwise stops them.
 (define within-frame?
   (lambda (lst)  
     (if (null? lst)
@@ -565,14 +519,8 @@
                 (within-frame? (cdr lst)))))))
 
 
-;; FUNCTION: collide?
-    ;;
-    ;; DESCRIPTION: Checks collisions using distance between a point
-    ;;              (the snakes head) and a line drawn up by two other points.           
-    ;;
-    ;; INPUT: body and head.
-    ;;
-    ;; OUTPUT: None.
+
+;; Checks collisions using distance between a point (the snakes head) and a line drawn up by two other points.
 (define collide?
   (lambda (body head)
     (if (null? (cdr body))
@@ -591,15 +539,7 @@
            (<= (/ (abs (+ (- (* (- y2 y1) x0) (* (- x2 x1) y0) (* y2 x1)) (* x2 y1))) (sqrt (+ (expt (- y2 y1) 2) (expt (- x2 x1) 2)))) 100)
            (collide? (cdr body) head))))))
 
-
-;; FUNCTION: collide?
-    ;;
-    ;; DESCRIPTION: Function checking collision between snakes,
-    ;;              sends stop to the colliding snake.          
-    ;;
-    ;; INPUT: lst.
-    ;;
-    ;; OUTPUT: None.
+;; Function checking collision between snakes. Sends stop to the colliding snake.
 (define check-collisions
   (lambda (lst)
     (begin
@@ -623,15 +563,8 @@
       (when (collide? (send (caddr lst) get-body) (send (cadr lst) get-head))
         (send (cadr lst) stop)))))
 
-
-;; FUNCTION: collisions-power-ups
-    ;;
-    ;; DESCRIPTION: Procedure that detects collisions with powerups,
-    ;;              and executes that power-up to the snake colliding.          
-    ;;
-    ;; INPUT: lst.
-    ;;
-    ;; OUTPUT: None.
+;; Procedure that detects collisions with powerups and executes that power-up
+;; to the snake colliding.
 (define collisions-power-ups
   (lambda (lst)             
     (when (not (null? lst))
@@ -705,3 +638,21 @@
     (send game-canvas focus)
     (send game-canvas init)
     (send game-canvas show #t)))
+
+
+
+
+
+
+;(send *graphics-timer* start 32 #f)
+;(send *game-timer* start 32 #f)
+;(send game-frame show #t)
+;(send game-canvas show #t)
+;(send game-canvas focus)
+;(send game-canvas init)
+;(send game-canvas show #t)
+
+
+;(send *game-timer* start 32 #f)
+;(send *graphics-timer* start 32 #f)
+

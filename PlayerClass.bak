@@ -2,24 +2,6 @@
 
 (provide player%)
 
-;; FILE:        PlayerClass.rkt
-;;
-;; DESCRIPTION: Contains all functions for the snakes.
-;;              
-;;
-;; LAST CHANGE: 2016-05-25 (by Jakob).
-;;
-;; Written by:  Simon Kantedal.
-
-
-;; FUNCTION:    player%
-    ;;
-    ;; DESCRIPTION: The player class
-    ;;              
-    ;;
-    ;; INPUT:       none.
-    ;;
-    ;; OUTPUT:      None.
 (define player%
   (class object%
     (init-field name
@@ -43,34 +25,25 @@
      [turn 0]
      [number-of-rounds 1])
     
-    (define/public (get-snake) snake) ;; Gets the whole snake.
-    (define/public (get-body) (cddr snake)) ;; gets the body of the snake (all coordinate pairs except the first).
-    (define/public (get-head) (car snake)) ;; gets the head of the snake (the first coordinate pair).
-    (define/public (get-x) (car (car snake))) ;; gets the x-coordinate of the head.
-    (define/public (get-y) (cdr (car snake))) ;; gets the y-coordinate of the head.
-    (define/public (get-name) name) ;; gets the players name.
-    (define/public (get-direction) direction) ;; gets direction of given snake.
-    (define/public (is-alive?) alive) ;; parameter that tells if the snake has died or not.
-    (define/public (show?) show) ;; parameter that decides if the snake is included in the game or not.
-    (define/public (get-velocity) velocity) ;; gets the snakes velocity.
-    (define/public (changed?) changed) ;; parameter that shows if the snakes features has changed. i.e if the player is affected by any power-up at the moment.
-    (define/public (get-color) color) ;; gets the color on the snake.
-    (define/public (get-score) score) ;; gets the snakes score.
-    (define/public (get-acc-score) accumulated-score) ;; gets the snakes acccumulated score.
-    (define/public (get-rounds) number-of-rounds) ;; get the number of rounds played.
+    (define/public (get-snake) snake) ; gets the whole snake.
+    (define/public (get-body) (cddr snake)) ; gets the body of the snake (all coordinate pairs except the first).
+    (define/public (get-head) (car snake)) ; gets the head of the snake (the first coordinate pair).
+    (define/public (get-x) (car (car snake))) ; gets the x-coordinate of the head.
+    (define/public (get-y) (cdr (car snake))) ; gets the y-coordinate of the head.
+    (define/public (get-name) name) ; gets the players name.
+    (define/public (get-direction) direction) ; gets direction of given snake.
+    (define/public (is-alive?) alive) ; parameter that tells if the snake has died or not.
+    (define/public (show?) show) ; parameter that decides if the snake is included in the game or not.
+    (define/public (get-velocity) velocity) ; gets the snakes velocity.
+    (define/public (changed?) changed) ; parameter that shows if the snakes features has changed. i.e if the player is affected by any power-up at the moment.
+    (define/public (get-color) color)
+    (define/public (get-score) score)
+    (define/public (get-acc-score) accumulated-score)
+    (define/public (get-rounds) number-of-rounds)
 
-    ;; Procedure to set number-of-rounds to + 1.
     (define/public (add-round)
       (set! number-of-rounds (+ number-of-rounds 1)))
-
-    ;; FUNCTION:    set-snake!
-    ;;
-    ;; DESCRIPTION: Function called from start-round in world.rkt, to change the snakes status.
-    ;;              
-    ;;
-    ;; INPUT:       nsnake.
-    ;;
-    ;; OUTPUT:      None.
+    
     (define/public (set-snake! nsnake)
       (if (equal? show #t)
           (begin
@@ -83,17 +56,17 @@
             (set! turn 0))
           (void)))
     
-    ;; resets the score to zero.
+    
     (define/public (reset-score)
       (set! score 0))
-    ;; set score to score + 1.
+    
     (define/public (add-score)
       (set! score (+ score 1)))
-    ;; Set the score and accumulated-score together. 
+    
     (define/public (sum-up-score)
       (set! accumulated-score (+ score accumulated-score)))
     
-    ;; Stops the snake by setting the velocity to 0.
+    ; Stops the snake by setting the velocity to 0.
     (define/public (stop)
       (set! velocity 0)
       ;(set! starting-velocity 0)
@@ -132,7 +105,7 @@
     ;; Removes the player from the round by setting remove 
     (define/public (remove)
       (set! show #f))
-    ;; Change a player alive status
+    
     (define/public (kill)
       (set! alive #f))
     (define/public (revive)
@@ -146,37 +119,28 @@
       (set! steering-radius 0.08)
       (set! changed #f))
           (void)))
-
-    ;; Let the player turn left
+    
     (define (turn-left)
       (begin
         (set! angle (- angle steering-radius))
         (let ((x (* velocity (cos angle)))
               (y (* velocity (sin angle))))
           (set! direction (cons x y)))))
-
-    ;; Let the player turn right
+    
     (define (turn-right)
       (begin
         (set! angle (+ angle steering-radius))
         (let ((x (* velocity (cos angle)))
               (y (* velocity (sin angle))))
           (set! direction (cons x y)))))
-    ;; Let the player move straight ahead
+    
     (define (no-turn)
       (begin
         (let ((x (* velocity (cos angle)))
               (y (* velocity (sin angle))))
           (set! direction (cons x y)))))
     
-    ;; FUNCTION:    steer
-    ;;
-    ;; DESCRIPTION: Function that checks if key-events key value is the same as
-    ;;              l or r + the player-id            
-    ;;
-    ;; INPUT:       key-events.
-    ;;
-    ;; OUTPUT:      None.
+    
     (define/public steer
       (lambda (key-events)
         (begin
@@ -190,14 +154,7 @@
             ((equal? (hash-ref key-events (string-append "r" player-id)) #f)
              (set! turn 0))))))
     
-    ;; FUNCTION:    update
-    ;;
-    ;; DESCRIPTION: Function that updates the time 
-    ;;              
-    ;;
-    ;; INPUT:       time.
-    ;;
-    ;; OUTPUT:      None.
+    
     (define/public update
       (lambda (time)
         (let* (
